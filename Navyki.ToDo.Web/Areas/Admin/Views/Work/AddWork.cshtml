@@ -1,0 +1,34 @@
+﻿@model WorkAddVM
+@{
+    ViewData["Title"] = "AddWork";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<form asp-action="AddWork" method="post" class="w-75 mx-auto p-3">
+    <div class="form-group">
+        <label>Ad :</label>
+        <span class="text-danger" asp-validation-for="Name"></span>
+        <input type="text" asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Açıklama :</label>
+        <span class="text-danger"></span>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Aciliyet Durumu Seçiniz:</label>
+        <span asp-validation-for="UrgencyId" class="text-danger"></span>
+        <select asp-for="UrgencyId" class="form-control" asp-items="ViewBag.Urgencies">
+            <option hidden value="-1">Seçiniz</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-info btn-sm"><i class="fas fa-check mr-2"></i>Kaydet</button>
+</form>
+
+@section JavaScript{
+
+    <script src="~/lib/jqueryValidate/jquery.validate.min.js"></script>
+    <script src="~/lib/jqueryUnob/jquery.validate.unobtrusive.min.js"></script>
+}

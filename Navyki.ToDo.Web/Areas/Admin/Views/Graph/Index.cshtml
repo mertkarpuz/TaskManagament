@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-6"><div id="piechart_4d" class="w-100" style="height: 500px;"></div></div>
+    <div class="col-md-6"><div id="piechart_3d" class="w-100" style="height: 500px;"></div></div>
+</div>
+
+
+
+@section JavaScript{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            let mostWorkedMember = [['Personel Adı', 'Görev Sayısı']];
+            $.ajax({
+                type: "Get",
+                url: "./Graph/MostAssignedMember",
+                async: false,
+                success: function (data) {
+                    let returnObject = jQuery.parseJSON(data);
+                    $.each(returnObject, (index, value) => {
+                        mostWorkedMember.push([value.Name, value.WorkCount]);
+                    });
+                }
+            })
+            var data = google.visualization.arrayToDataTable(mostWorkedMember);
+
+            var options = {
+                title: 'En çok görevde çalışan 5 personel',
+                is3D: true,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart_4d'));
+
+            chart.draw(data, options);
+        }
+    </script>
+
+
+
+
+
+    <script type="text/javascript">
+     
+
+
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(drawChart2);
+        function drawChart2() {
+            let mostWorkComplatedMembers = [['Personel Adı', 'Görev Sayısı']];
+            $.ajax({
+                type: "Get",
+                url: "./Graph/MostCompleted",
+                async: false,
+                success: function (data) {
+                    let returnObject = jQuery.parseJSON(data);
+                    $.each(returnObject, (index, value) => {
+                        mostWorkComplatedMembers.push([value.Name, value.WorkCount]);
+                    });
+                }
+            })
+            var data = google.visualization.arrayToDataTable(mostWorkComplatedMembers);
+
+            var options = {
+                title: 'En Çok İş Tamamlayan 5 Personel',
+                is3D: true,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+            chart.draw(data, options);
+        }
+    </script>
+}

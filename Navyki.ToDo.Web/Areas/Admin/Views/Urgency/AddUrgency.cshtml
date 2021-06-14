@@ -1,0 +1,21 @@
+﻿@model UrgencyAddVM
+@{
+    ViewData["Title"] = "AddUrgency";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<form class="w-75 mx-auto p-3" method="post">
+    <div class="form-group">
+        <label asp-for="@Model.Description"></label>
+        <span class="text-danger" asp-validation-for="@Model.Description"></span>
+        <input asp-for="@Model.Description" type="text" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-info btn-sm"><i class="fas fa-check mr-2"></i>Kaydet</button>
+</form>
+
+
+@section JavaScript{ 
+
+    <script src="~/lib/jqueryValidate/jquery.validate.min.js"></script>
+    <script src="~/lib/jqueryUnob/jquery.validate.unobtrusive.min.js"></script>
+}

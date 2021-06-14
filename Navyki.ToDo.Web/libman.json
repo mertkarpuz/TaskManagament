@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "twitter-bootstrap@4.6.0",
+      "destination": "wwwroot/lib/twitter-bootstrap/",
+      "files": [
+        "css/bootstrap.min.css",
+        "js/bootstrap.bundle.min.js",
+        "js/bootstrap.min.js"
+      ]
+    },
+    {
+      "library": "jquery@3.6.0",
+      "destination": "wwwroot/lib/jquery/",
+      "files": [ "jquery.min.js" ]
+    },
+    {
+      "library": "jquery-validate@1.19.2",
+      "destination": "wwwroot/lib/jqueryValidate",
+      "files": [ "jquery.validate.min.js" ]
+    },
+    {
+      "library": "jquery-validation-unobtrusive@3.2.12",
+      "destination": "wwwroot/lib/jqueryUnob",
+      "files": [ "jquery.validate.unobtrusive.min.js" ]
+    },
+    {
+      "library": "font-awesome@5.15.3",
+      "destination": "wwwroot/lib/fontAwesome",
+      "files": ["css/all.min.css","js/all.min.js","webfonts/fa-solid-900.woff","webfonts/fa-brands-400.woff2","webfonts/fa-regular-400.ttf","webfonts/fa-solid-900.ttf"]
+    }
+  ]
+}

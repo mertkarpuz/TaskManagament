@@ -1,0 +1,106 @@
+﻿@model WorkListVM
+@{
+    ViewData["Title"] = "AssignMember";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    string s = (string)ViewBag.Searched;
+}
+
+<style>
+    .removeClick:focus {
+        border-color: none;
+        box-shadow: none;
+        outline: 0 none;
+    }
+</style>
+
+<div class="row mt-2">
+    <div class="col-md-12 mb-2">
+
+        @if (!string.IsNullOrWhiteSpace(s))
+        {
+            <div class="border border-dark p-3 mb-2">
+                <strong>@s</strong> kelimesi için sonuçları görüyorsunuz.
+                <a asp-action="AssignMember" asp-route-id="@Model.Id" class="float-right">Filtreyi kaldır</a>
+            </div>
+        }
+
+
+        <form method="get" asp-action="AssignMember" class="text-right">
+            <input type="text" name="s" class="form-control-sm border removeClick border-primary border-top-0 border-left-0 border-right-0" style="border-radius:0px" />
+            <button type="submit" class="btn btn-primary btn-sm">Ara</button>
+        </form>
+    </div>
+    <div class="col-md-4">
+
+        <div class="card border">
+            <div class="card-header">
+                <h4 class="text-center pt-2 lead">Görev Bilgileri</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@Model.Name</h5>
+                <p class="card-text">
+                    @Model.Description
+                </p>
+                <p class="card-text">
+                    <strong>Aciliyet Durumu: </strong><span class="badge badge-primary">@Model.Urgency.Description</span>
+                </p>
+
+                <p class="card-text">
+                    <small>
+                        @Model.CreatedTime.ToString("D")
+                    </small>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+
+
+
+
+
+
+
+
+        @foreach (var item in (List<AppUserListVM>)ViewBag.Members)
+        {
+            <div class="card border mb-3">
+                <div class="row no-gutters">
+                    <div class="col-md-2 p-1  my-auto">
+                        <img src="~/img/@item.Picture" class="card-img img-thumbnail shadow" style="" alt="@item.Name" />
+                    </div>
+                    <div class="col-md-10">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Name @item.Surname</h5>
+                            <p class="card-text"><GetWorkAppUserId app-user-id="@item.Id"></GetWorkAppUserId></p>
+                            <p class="card-text"><small class="text-muted">@item.Email</small>
+
+                            <a asp-action="WorkAssignMember" asp-route-MemberId="@item.Id" asp-route-WorkId="@Model.Id" class="btn btn-primary float-right btn-sm">Görevlendir</a>
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                @if (!string.IsNullOrWhiteSpace(s))
+                {
+                    @for (int i = 1; i <= ViewBag.TotalPage; i++)
+                    {
+                        <li class="page-item @( ViewBag.activePage ==i ? "active":"")"><a class="page-link" asp-action="AssignMember" asp-route-id="@Model.Id" asp-route-page="@i" asp-route-s="@s">@i</a></li>
+                    }
+                }
+                else
+                {
+                    @for (int i = 1; i <= ViewBag.TotalPage; i++)
+                    {
+                        <li class="page-item @( ViewBag.activePage ==i ? "active":"")"><a class="page-link" asp-action="AssignMember" asp-route-id="@Model.Id" asp-route-page="@i">@i</a></li>
+                    }
+                }
+
+            </ul>
+        </nav>
+    </div>
+</div>
