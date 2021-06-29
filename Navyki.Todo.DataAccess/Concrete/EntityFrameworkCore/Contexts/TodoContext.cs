@@ -9,7 +9,7 @@ namespace Navyki.Todo.DataAccess.Concrete.EntityFrameworkCore.Contexts
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"////Server properties here....");
+            optionsBuilder.UseSqlServer(@"//connectionstring");
             base.OnConfiguring(optionsBuilder);
         }
 
