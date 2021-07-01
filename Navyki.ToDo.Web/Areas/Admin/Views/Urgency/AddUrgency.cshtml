@@ -1,4 +1,4 @@
-﻿@model UrgencyAddVM
+﻿@model UrgencyAddDto
 @{
     ViewData["Title"] = "AddUrgency";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
@@ -6,7 +6,7 @@
 
 <form class="w-75 mx-auto p-3" method="post">
     <div class="form-group">
-        <label asp-for="@Model.Description"></label>
+        <label asp-for="@Model.Description">Tanım: </label>
         <span class="text-danger" asp-validation-for="@Model.Description"></span>
         <input asp-for="@Model.Description" type="text" class="form-control" />
     </div>

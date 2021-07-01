@@ -2,10 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Navyki.Todo.DTO.DTOs.AppUserDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.Areas.Member.Models;
 
@@ -16,27 +18,21 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
     public class ProfileController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
-        public ProfileController(UserManager<AppUser> userManager)
+        private readonly IMapper _mapper;
+        public ProfileController(UserManager<AppUser> userManager, IMapper mapper)
         {
             _userManager = userManager;
+            _mapper = mapper;
         }
         public async Task<IActionResult> Index()
         {
             TempData["Active"] = "profile";
             var appUser = await _userManager.FindByNameAsync(User.Identity.Name);
-            AppUserListVM model = new AppUserListVM
-            {
-                Id = appUser.Id,
-                Name = appUser.Name,
-                Surname = appUser.Surname,
-                Picture = appUser.Picture,
-                Email = appUser.Email
-            };
-            return View(model);
+            return View(_mapper.Map<AppUserListDto>(appUser));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(AppUserListVM model, IFormFile Image)
+        public async Task<IActionResult> Index(AppUserListDto model, IFormFile Image)
         {
             if (ModelState.IsValid)
             {

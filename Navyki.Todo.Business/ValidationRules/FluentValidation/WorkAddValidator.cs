@@ -11,7 +11,7 @@ namespace Navyki.Todo.Business.ValidationRules.FluentValidation
         public WorkAddValidator()
         {
             RuleFor(x => x.Name).NotNull().WithMessage("Ad alanı gereklidir.");
-            RuleFor(x => x.UrgencyId).ExclusiveBetween(1, int.MaxValue).WithMessage("Lütfen bir aciliyet durumu seçiniz.");
+            RuleFor(x => x.UrgencyId).ExclusiveBetween(0, int.MaxValue).WithMessage("Lütfen bir aciliyet durumu seçiniz.");
              
         }
     }

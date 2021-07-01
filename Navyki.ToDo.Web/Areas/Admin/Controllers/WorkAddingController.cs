@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
+using Navyki.Todo.DTO.DTOs.AppUserDtos;
+using Navyki.Todo.DTO.DTOs.WorkDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.Areas.Admin.Models;
 
@@ -20,32 +23,20 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
         public readonly UserManager<AppUser> _userManager;
         public readonly IFileService _fileService;
         private readonly INotificationService _notificationService;
-        public WorkAddingController(IAppUserService appUserService, IWorkService workService, UserManager<AppUser> userManager, IFileService fileService, INotificationService notificationService)
+        private readonly IMapper _mapper;
+        public WorkAddingController(IAppUserService appUserService, IWorkService workService, UserManager<AppUser> userManager, IFileService fileService, INotificationService notificationService, IMapper mapper)
         {
             _appUserService = appUserService;
             _workService = workService;
             _userManager = userManager;
+            _mapper = mapper;
             _fileService = fileService;
             _notificationService = notificationService;
         }
         public IActionResult Index()
         {
             TempData["Active"] = "workadding";
-            List<Work> works = _workService.GetAllWithTables();
-            List<WorkListAllVM> models = new List<WorkListAllVM>();
-            foreach (var item in works)
-            {
-                WorkListAllVM model = new WorkListAllVM();
-                model.Id = item.Id;
-                model.Description = item.Description;
-                model.Urgency = item.Urgency;
-                model.Name = item.Name;
-                model.AppUser = item.AppUser;
-                model.CreatedTime = item.CreatedTime;
-                model.Reports = item.Reports;
-                models.Add(model);
-            }
-            return View(models);
+            return View(_mapper.Map<List<WorkListAllDto>>(_workService.GetAllWithTables()));
         }
 
 
@@ -55,36 +46,16 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
             ViewBag.activePage = page;
             //ViewBag.TotalPage = (int)Math.Ceiling((double)_appUserService.GetNotAdmin().Count / 3);
             int totalPage;
-            var members = _appUserService.GetNotAdmin(out totalPage, s, page);
-
+            var members = _mapper.Map<List<AppUserListDto>>(_appUserService.GetNotAdmin(out totalPage, s, page));
             ViewBag.TotalPage = totalPage;
             ViewBag.Searched = s;
-
-            List<AppUserListVM> AppUserListmodel = new List<AppUserListVM>();
-            foreach (var item in members)
-            {
-                AppUserListVM model = new AppUserListVM();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.Surname = item.Surname;
-                model.Email = item.Email;
-                model.Picture = item.Picture;
-                AppUserListmodel.Add(model);
-            }
-            ViewBag.Members = AppUserListmodel;
-            var urgency = _workService.GetUrgencyWithId(id);
-            WorkListVM Workmodel = new WorkListVM();
-            Workmodel.Id = urgency.Id;
-            Workmodel.Name = urgency.Name;
-            Workmodel.Description = urgency.Description;
-            Workmodel.Urgency = urgency.Urgency;
-            Workmodel.CreatedTime = urgency.CreatedTime;
-            return View(Workmodel);
+            ViewBag.Members = members;
+            return View(_mapper.Map<WorkListDto>(_workService.GetUrgencyWithId(id)));
         }
 
 
         [HttpPost]
-        public IActionResult AssignMember(MemberWorkAssignVM model)
+        public IActionResult AssignMember(MemberWorkAssignDto model)
         {
             TempData["Active"] = "workadding";
             var willBeUpdateWork = _workService.GetById(model.WorkId);
@@ -106,14 +77,8 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
         public IActionResult Details(int id)
         {
             TempData["Active"] = "workadding";
-            var work = _workService.GetWReportsWId(id);
-            WorkListAllVM model = new WorkListAllVM();
-            model.Id = work.Id;
-            model.Reports = work.Reports;
-            model.Name = work.Name;
-            model.Description = work.Description;
-            model.AppUser = work.AppUser;
-            return View(model);
+
+            return View(_mapper.Map<WorkListAllDto>(_workService.GetWReportsWId(id)));
         }
 
 
@@ -121,29 +86,12 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
 
 
 
-        public IActionResult WorkAssignMember(MemberWorkAssignVM model)
+        public IActionResult WorkAssignMember(MemberWorkAssignDto model)
         {
             TempData["Active"] = "workadding";
-            var returnedUser = _userManager.Users.FirstOrDefault(x => x.Id == model.MemberId);
-            var returnedWork = _workService.GetUrgencyWithId(model.WorkId);
-
-            AppUserListVM userModel = new AppUserListVM();
-            userModel.Id = returnedUser.Id;
-            userModel.Name = returnedUser.Name;
-            userModel.Picture = returnedUser.Picture;
-            userModel.Surname = returnedUser.Surname;
-            userModel.Email = returnedUser.Email;
-
-            WorkListVM workModel = new WorkListVM();
-            workModel.Id = returnedWork.Id;
-            workModel.Description = returnedWork.Description;
-            workModel.Urgency = returnedWork.Urgency;
-            workModel.Name = returnedWork.Name;
-
-            MemberWorkAssignListVM memberAssignWorkModel = new MemberWorkAssignListVM();
-
-            memberAssignWorkModel.AppUser = userModel;
-            memberAssignWorkModel.Work = workModel;
+            MemberWorkAssignListDto memberAssignWorkModel = new MemberWorkAssignListDto();
+            memberAssignWorkModel.AppUser = _mapper.Map<AppUserListDto>(_userManager.Users.FirstOrDefault(x => x.Id == model.MemberId));
+            memberAssignWorkModel.Work = _mapper.Map<WorkListDto>(_workService.GetUrgencyWithId(model.WorkId));
 
 
             return View(memberAssignWorkModel);

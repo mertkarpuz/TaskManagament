@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -5,9 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Navyki.Todo.Business.Concrete;
 using Navyki.Todo.Business.Interfaces;
+using Navyki.Todo.Business.ValidationRules.FluentValidation;
 using Navyki.Todo.DataAccess.Concrete.EntityFrameworkCore.Contexts;
 using Navyki.Todo.DataAccess.Concrete.EntityFrameworkCore.Repositories;
 using Navyki.Todo.DataAccess.Interfaces;
+using Navyki.Todo.DTO.DTOs.AppUserDtos;
+using Navyki.Todo.DTO.DTOs.ReportDtos;
+using Navyki.Todo.DTO.DTOs.UrgencyDtos;
+using Navyki.Todo.DTO.DTOs.WorkDtos;
 using Navyki.Todo.Entities.Concrete;
 using System;
 
@@ -55,8 +62,22 @@ namespace Navyki.ToDo.Web
 
             );
 
+            services.AddAutoMapper(typeof(Startup));
+            services.AddTransient<IValidator<UrgencyAddDto>,UrgencyAddValidator>();
+            services.AddTransient<IValidator<UrgencyUpdateDto>, UrgencyUpdateValidator>();
+            services.AddTransient<IValidator<AppUserAddDto>, AppUserAddValidator>();
+            services.AddTransient<IValidator<AppUserSignInDto>, AppUserSignInValidator>();
+            services.AddTransient<IValidator<WorkAddDto>, WorkAddValidator>();
+            services.AddTransient<IValidator<WorkUpdateDto>, WorkUpdateValidator>();
+            services.AddTransient<IValidator<ReportAddDto>, ReportAddValidator>();
+            services.AddTransient<IValidator<ReportUpdateDto>, ReportUpdateValidator>();
 
-            services.AddControllersWithViews();
+
+
+
+
+
+            services.AddControllersWithViews().AddFluentValidation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

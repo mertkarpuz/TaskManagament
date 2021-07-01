@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
+using Navyki.Todo.DTO.DTOs.AppUserDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.Models;
 using System;
@@ -14,28 +16,26 @@ namespace Navyki.ToDo.Web.ViewComponents
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly INotificationService _notificationService;
+        private readonly IMapper _mapper;
        
-        public Wrapper(UserManager<AppUser> userManager, INotificationService notificationService)
+        public Wrapper(UserManager<AppUser> userManager, INotificationService notificationService, IMapper mapper)
         {
             _userManager = userManager;
+            _mapper = mapper;
             _notificationService = notificationService;
         }
 
         public IViewComponentResult Invoke()
         {
-            var user = _userManager.FindByNameAsync(User.Identity.Name).Result;
-            AppUserListVM model = new AppUserListVM();
-            model.Id = user.Id;
-            model.Name = user.Name;
-            model.Picture = user.Picture;
-            model.Surname = user.Surname;
-            model.Email = user.Email;
+            var identityUser = _userManager.FindByNameAsync(User.Identity.Name).Result;
+            var model = _mapper.Map<AppUserListDto>(identityUser);
+            
 
-            var notifications = _notificationService.GetNotReaded(user.Id).Count();
+            var notifications = _notificationService.GetNotReaded(model.Id).Count();
 
             ViewBag.NotificationCount = notifications;
 
-            var roles = _userManager.GetRolesAsync(user).Result;
+            var roles = _userManager.GetRolesAsync(identityUser).Result;
             if (roles.Contains("Admin"))
             {
                 return View(model);

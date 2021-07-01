@@ -1,4 +1,4 @@
-﻿@model UrgencyUpdateVM
+﻿@model UrgencyUpdateDto
 
 @{
     ViewData["Title"] = "UpdateUrgency";
@@ -8,7 +8,7 @@
 <form asp-action="UpdateUrgency" class="w-75 mx-auto p-3" method="post">
     <input type="hidden" asp-for="@Model.Id" />
     <div class="form-group">
-        <label asp-for="@Model.Description"></label>
+        <label asp-for="@Model.Description">Tanım: </label>
         <span class="text-danger" asp-validation-for="@Model.Description"></span>
         <input asp-for="@Model.Description" type="text" class="form-control" />
     </div>

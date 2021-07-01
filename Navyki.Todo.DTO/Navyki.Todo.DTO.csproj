@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Navyki.Todo.Entities\Navyki.Todo.Entities.csproj" />
+  </ItemGroup>
+
 </Project>

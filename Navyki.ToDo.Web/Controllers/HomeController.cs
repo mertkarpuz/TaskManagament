@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
+using Navyki.Todo.DTO.DTOs.AppUserDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.Models;
 
@@ -12,12 +13,11 @@ namespace Navyki.ToDo.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IWorkService _workService;
+
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        public HomeController(IWorkService workService, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
-            _workService = workService;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -27,7 +27,7 @@ namespace Navyki.ToDo.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult>Login(AppUserSignInModel model)
+        public async Task<IActionResult>Login(AppUserSignInDto model)
         {
             if (ModelState.IsValid)
             {
@@ -61,7 +61,7 @@ namespace Navyki.ToDo.Web.Controllers
 
 
         [HttpPost]
-        public async  Task<IActionResult> Register(AppUserAddVM model)
+        public async  Task<IActionResult> Register(AppUserAddDto model)
         {
             if (ModelState.IsValid)
             {

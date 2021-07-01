@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Navyki.Todo.DTO.DTOs.AppUserDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.Areas.Admin.Models;
 
@@ -17,25 +19,20 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
     public class ProfileController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
-        public ProfileController(UserManager<AppUser> userManager)
+        private readonly IMapper _mapper;
+        public ProfileController(UserManager<AppUser> userManager,IMapper mapper)
         {
             _userManager = userManager;
+            _mapper = mapper;
         }
         public async Task<IActionResult> Index()
         {
             TempData["Active"] = "profile";
-            var appUser = await _userManager.FindByNameAsync(User.Identity.Name);
-            AppUserListVM model = new AppUserListVM();
-            model.Id = appUser.Id;
-            model.Name = appUser.Name;
-            model.Surname = appUser.Surname;
-            model.Picture = appUser.Picture;
-            model.Email = appUser.Email;
-            return View(model);
+            return View(_mapper.Map<AppUserListDto>(await _userManager.FindByNameAsync(User.Identity.Name)));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(AppUserListVM model, IFormFile Image)
+        public async Task<IActionResult> Index(AppUserListDto model, IFormFile Image)
         {
             if (ModelState.IsValid)
             {

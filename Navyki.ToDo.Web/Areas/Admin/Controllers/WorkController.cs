@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Navyki.Todo.Business.Interfaces;
+using Navyki.Todo.DTO.DTOs.WorkDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.Areas.Admin.Models;
 
@@ -18,8 +20,10 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
 
         private readonly IWorkService _workService;
         private readonly IUrgencyService _urgencyService;
-        public WorkController(IWorkService workService, IUrgencyService urgencyService)
+        private readonly IMapper _mapper;
+        public WorkController(IWorkService workService, IUrgencyService urgencyService , IMapper mapper)
         {
+            _mapper = mapper;
             _urgencyService = urgencyService;
             _workService = workService;
         }
@@ -27,34 +31,18 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
         public IActionResult Index()
         {
             TempData["Active"] = "work";
-            List<Work> works = _workService.GetWithUrgencyUnComp();
-            List<WorkListVM> models = new List<WorkListVM>();
-            foreach (var item in works)
-            {
-                WorkListVM model = new WorkListVM
-                {
-                    Description = item.Description,
-                    Urgency = item.Urgency,
-                    UrgencyId = item.UrgencyId,
-                    Name = item.Name,
-                    State = item.State,
-                    Id = item.Id,
-                    CreatedTime = item.CreatedTime
-                };
-                models.Add(model);
-            }
-            return View(models);
+            return View(_mapper.Map<List<WorkListDto>>(_workService.GetWithUrgencyUnComp()));
         }
 
         public IActionResult AddWork()
         {
             TempData["Active"] = "work";
             ViewBag.Urgencies = new SelectList(_urgencyService.GetAll(), "Id", "Description");
-            return View(new WorkAddVM());
+            return View(new WorkAddDto());
         }
 
         [HttpPost]
-        public IActionResult AddWork(WorkAddVM model)
+        public IActionResult AddWork(WorkAddDto model)
         {
             if (ModelState.IsValid)
             {
@@ -76,19 +64,12 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
         {
             TempData["Active"] = "work";
             var work = _workService.GetById(id);
-            WorkUpdateVM model = new WorkUpdateVM()
-            {
-                Id = work.Id,
-                Description = work.Description,
-                UrgencyId = work.UrgencyId,
-                Name = work.Name
-            };
             ViewBag.Urgencies = new SelectList(_urgencyService.GetAll(), "Id", "Description",work.UrgencyId);
-            return View(model);
+            return View(_mapper.Map<WorkUpdateDto>(work));
         }
 
         [HttpPost]
-        public IActionResult UpdateWork(WorkUpdateVM model)
+        public IActionResult UpdateWork(WorkUpdateDto model)
         {
             if (ModelState.IsValid)
             {
@@ -96,11 +77,12 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
                 {
                     Id=model.Id,
                     Description = model.Description,
-                    UrgencyId = model.Id,
+                    UrgencyId = model.UrgencyId,
                     Name=model.Name
                 });
                 return RedirectToAction("Index");
             }
+            ViewBag.Urgencies = new SelectList(_urgencyService.GetAll(), "Id", "Description", model.UrgencyId);
             return View(model);
         }
 

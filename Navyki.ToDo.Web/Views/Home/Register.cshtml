@@ -1,4 +1,4 @@
-﻿@model AppUserAddVM
+﻿@model AppUserAddDto
 @{
     ViewData["Title"] = "Register";
     Layout = "~/Views/Shared/StandardLayout.cshtml";
@@ -9,34 +9,34 @@
 <form asp-action="Register" class="w-75 mt-4 mt-3 mx-auto p-3 shadow">
     <h4 class="text-center">Kayıt Ol</h4>
     <div class="form-group">
-        <label asp-for="@Model.Name"></label>
+        <label asp-for="@Model.Name">Adınız:</label>
         <span asp-validation-for="Name" class="text-danger"></span>
         <input asp-for="Name" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="@Model.Surname"></label>
+        <label asp-for="@Model.Surname">Soyadınız:</label>
         <span asp-validation-for="Surname" class="text-danger"></span>
         <input asp-for="Surname" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="@Model.Email"></label>
+        <label asp-for="@Model.Email">Email:</label>
         <span asp-validation-for="Email" class="text-danger"></span>
         <input asp-for="Email" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="@Model.Password"></label>
+        <label asp-for="@Model.Password">Şifre:</label>
         <span asp-validation-for="Password" class="text-danger"></span>
         <input asp-for="Password" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="@Model.ConfirmPassword"></label>
+        <label asp-for="@Model.ConfirmPassword">Şifre tekrarı:</label>
         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-        <input asp-for="ConfirmPassword" class="form-control" />
+        <input type="password" asp-for="ConfirmPassword" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="@Model.UserName"></label>
+        <label asp-for="@Model.UserName">Kullanıcı Adı:</label>
         <span asp-validation-for="UserName" class="text-danger"></span>
-        <input asp-for="UserName" class="form-control" />
+        <input type="password" asp-for="UserName" class="form-control" />
     </div>
 
     <div asp-validation-summary="ModelOnly" class="text-danger">

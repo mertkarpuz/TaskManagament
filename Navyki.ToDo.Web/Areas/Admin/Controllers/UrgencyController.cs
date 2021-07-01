@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
+using Navyki.Todo.DTO.DTOs.UrgencyDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.Areas.Admin.Models;
 using System.Collections.Generic;
@@ -12,33 +14,26 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
     public class UrgencyController : Controller
     {
         private readonly IUrgencyService _urgencyService;
-        public UrgencyController(IUrgencyService urgencyService)
+        private readonly IMapper _mapper;
+        public UrgencyController(IUrgencyService urgencyService, IMapper mapper)
         {
             _urgencyService = urgencyService;
+            _mapper = mapper;
         }
         public IActionResult Index()
         {
             TempData["Active"] = "urgency";
-            List<Urgency> Urgencies = _urgencyService.GetAll();
-            List<UrgencyListVM> model = new List<UrgencyListVM>();
-            foreach (var item in Urgencies)
-            {
-                UrgencyListVM urgencyModel = new UrgencyListVM();
-                urgencyModel.Id = item.Id;
-                urgencyModel.Description = item.Description;
-                model.Add(urgencyModel);
-            }
-            return View(model);
+            return View(_mapper.Map<List<UrgencyListDto>>(_urgencyService.GetAll()));
         }
 
 
         public IActionResult AddUrgency()
         {
             TempData["Active"] = "urgency";
-            return View(new UrgencyAddVM());
+            return View(new UrgencyAddDto());
         }
         [HttpPost]
-        public IActionResult AddUrgency(UrgencyAddVM model)
+        public IActionResult AddUrgency(UrgencyAddDto model)
         {
             if (ModelState.IsValid)
             {
@@ -58,19 +53,12 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
         public IActionResult UpdateUrgency(int id)
         {
             TempData["Active"] = "urgency";
-            var urgency = _urgencyService.GetById(id);
-            UrgencyUpdateVM model = new UrgencyUpdateVM
-            {
-                Id = urgency.Id,
-                Description = urgency.Description
-
-            };
-            return View(model);
+            return View(_mapper.Map<UrgencyUpdateDto>(_urgencyService.GetById(id)));
         }
 
 
         [HttpPost]
-        public IActionResult UpdateUrgency(UrgencyUpdateVM model)
+        public IActionResult UpdateUrgency(UrgencyUpdateDto model)
         {
             if (ModelState.IsValid)
             {

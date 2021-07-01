@@ -1,4 +1,4 @@
-﻿@model ReportAddVM
+﻿@model ReportAddDto
 @{
     ViewData["Title"] = "AddReport";
     Layout = "~/Areas/Member/Views/Shared/_MemberLayout.cshtml";
@@ -17,12 +17,12 @@
   
     <input type="hidden" asp-for="WorkId" />
     <div class="form-group">
-        <label asp-for="Description"></label>
+        <label asp-for="Description">Tanım:</label>
         <span asp-validation-for="Description" class="text-danger"></span>
         <input asp-for="Description" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="Detail"></label>
+        <label asp-for="Detail">Detay:</label>
         <span asp-validation-for="Detail" class="text-danger"></span>
         <textarea asp-for="Detail" class="form-control"></textarea>
     </div>

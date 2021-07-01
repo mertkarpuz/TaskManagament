@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
+using Navyki.Todo.DTO.DTOs.NotificationDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.Areas.Member.Models;
 using System;
@@ -18,25 +20,18 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
     {
         private readonly INotificationService _notificationService;
         private readonly UserManager<AppUser> _userManager;
-        public NotificationController(INotificationService notificationService, UserManager<AppUser> userManager)
+        private readonly IMapper _mapper;
+        public NotificationController(INotificationService notificationService, UserManager<AppUser> userManager, IMapper mapper)
         {
             _notificationService = notificationService;
             _userManager = userManager;
+            _mapper = mapper;
         }
         public async Task<IActionResult> Index()
         {
             TempData["Active"] = "notification";
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            var notifications = _notificationService.GetNotReaded(user.Id);
-            List<NotificationListViewModel> models = new List<NotificationListViewModel>();
-            foreach (var item in notifications)
-            {
-                NotificationListViewModel model = new NotificationListViewModel();
-                model.Id = item.Id;
-                model.Description = item.Description;
-                models.Add(model);
-            }
-            return View(models);
+            return View(_mapper.Map<List<NotificationListDto>>(_notificationService.GetNotReaded(user.Id)));
         }
 
         [HttpPost]
