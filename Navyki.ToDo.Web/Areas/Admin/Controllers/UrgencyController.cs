@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.DTO.DTOs.UrgencyDtos;
 using Navyki.Todo.Entities.Concrete;
-using Navyki.ToDo.Web.Areas.Admin.Models;
+using Navyki.ToDo.Web.StringInfo;
 using System.Collections.Generic;
 
 namespace Navyki.ToDo.Web.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    [Area("Admin")]
+    [Authorize(Roles = RoleInfo.Admin)]
+    [Area(AreaInfo.Admin)]
     public class UrgencyController : Controller
     {
         private readonly IUrgencyService _urgencyService;
@@ -22,14 +22,14 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            TempData["Active"] = "urgency";
+            TempData["Active"] = TempdataInfo.Urgency;
             return View(_mapper.Map<List<UrgencyListDto>>(_urgencyService.GetAll()));
         }
 
 
         public IActionResult AddUrgency()
         {
-            TempData["Active"] = "urgency";
+            TempData["Active"] = TempdataInfo.Urgency;
             return View(new UrgencyAddDto());
         }
         [HttpPost]
@@ -52,7 +52,7 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
 
         public IActionResult UpdateUrgency(int id)
         {
-            TempData["Active"] = "urgency";
+            TempData["Active"] = TempdataInfo.Urgency;
             return View(_mapper.Map<UrgencyUpdateDto>(_urgencyService.GetById(id)));
         }
 

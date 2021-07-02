@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.DTO.DTOs.NotificationDtos;
 using Navyki.Todo.Entities.Concrete;
-using Navyki.ToDo.Web.Areas.Member.Models;
+using Navyki.ToDo.Web.BaseControllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,21 +16,19 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
     [Authorize(Roles ="Member")]
     [Area("Member")]
 
-    public class NotificationController : Controller
+    public class NotificationController : BaseIdentityController
     {
         private readonly INotificationService _notificationService;
-        private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
-        public NotificationController(INotificationService notificationService, UserManager<AppUser> userManager, IMapper mapper)
+        public NotificationController(INotificationService notificationService, UserManager<AppUser> userManager, IMapper mapper) : base(userManager)
         {
             _notificationService = notificationService;
-            _userManager = userManager;
             _mapper = mapper;
         }
         public async Task<IActionResult> Index()
         {
             TempData["Active"] = "notification";
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var user = await GetLogginedUser();
             return View(_mapper.Map<List<NotificationListDto>>(_notificationService.GetNotReaded(user.Id)));
         }
 

@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
+using Navyki.ToDo.Web.StringInfo;
 using Newtonsoft.Json;
 
 namespace Navyki.ToDo.Web.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = RoleInfo.Admin)]
+    [Area(AreaInfo.Admin)]
     public class GraphController : Controller
     {
         private readonly IAppUserService _appUserService;
@@ -20,7 +21,7 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            TempData["Active"] = "Graph";
+            TempData["Active"] = TempdataInfo.Graph;
             return View();
         }
 

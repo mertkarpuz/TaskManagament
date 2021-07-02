@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.DTO.DTOs.AppUserDtos;
 using Navyki.Todo.Entities.Concrete;
-using Navyki.ToDo.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

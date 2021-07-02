@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.DTO.DTOs.WorkDtos;
 using Navyki.Todo.Entities.Concrete;
-using Navyki.ToDo.Web.Areas.Admin.Models;
+using Navyki.ToDo.Web.StringInfo;
 
 namespace Navyki.ToDo.Web.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    [Area("Admin")]
+    [Authorize(Roles = RoleInfo.Admin)]
+    [Area(AreaInfo.Admin)]
     public class WorkController : Controller
     {
 
@@ -30,13 +30,13 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            TempData["Active"] = "work";
+            TempData["Active"] = TempdataInfo.Work;
             return View(_mapper.Map<List<WorkListDto>>(_workService.GetWithUrgencyUnComp()));
         }
 
         public IActionResult AddWork()
         {
-            TempData["Active"] = "work";
+            TempData["Active"] = TempdataInfo.Work;
             ViewBag.Urgencies = new SelectList(_urgencyService.GetAll(), "Id", "Description");
             return View(new WorkAddDto());
         }
@@ -62,7 +62,7 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
 
         public IActionResult UpdateWork(int id)
         {
-            TempData["Active"] = "work";
+            TempData["Active"] = TempdataInfo.Work;
             var work = _workService.GetById(id);
             ViewBag.Urgencies = new SelectList(_urgencyService.GetAll(), "Id", "Description",work.UrgencyId);
             return View(_mapper.Map<WorkUpdateDto>(work));

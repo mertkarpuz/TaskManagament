@@ -7,18 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.DTO.DTOs.AppUserDtos;
 using Navyki.Todo.Entities.Concrete;
-using Navyki.ToDo.Web.Models;
+using Navyki.ToDo.Web.BaseControllers;
 
 namespace Navyki.ToDo.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseIdentityController
     {
-
-        private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager):base(userManager)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
         }
         public IActionResult Index()
@@ -31,7 +28,7 @@ namespace Navyki.ToDo.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(model.UserName);
+                var user = await GetLogginedUser();
                 if (user != null)
                 {
                   var identityResult =  await _signInManager.PasswordSignInAsync(model.UserName,model.Password,model.RememberMe,false);
@@ -80,15 +77,9 @@ namespace Navyki.ToDo.Web.Controllers
                     {
                         return RedirectToAction("Index");
                     }
-                    foreach (var item in AddRoleResult.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
+                    AddError(AddRoleResult.Errors);
                 }
-                foreach (var item in result.Errors)
-                {
-                    ModelState.AddModelError("", item.Description);
-                }
+                AddError(result.Errors);
             }
             return View(model);
 

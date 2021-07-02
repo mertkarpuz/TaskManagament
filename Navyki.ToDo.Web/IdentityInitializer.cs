@@ -25,11 +25,13 @@ namespace Navyki.ToDo.Web
             var adminUser = await userManager.FindByNameAsync("mert");
             if (adminUser == null)
             {
-                AppUser user = new AppUser();
-                user.Name = "Mert";
-                user.Surname = "Karpuz";
-                user.UserName = "mert";
-                user.Email = "m.mertt@hotmail.com";
+                AppUser user = new AppUser
+                {
+                    Name = "Mert",
+                    Surname = "Karpuz",
+                    UserName = "mert",
+                    Email = "m.mertt@hotmail.com"
+                };
                 await userManager.CreateAsync(user,"1");
                 await userManager.AddToRoleAsync(user, "Admin");
             }

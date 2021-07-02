@@ -10,31 +10,29 @@ using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.DTO.DTOs.ReportDtos;
 using Navyki.Todo.DTO.DTOs.WorkDtos;
 using Navyki.Todo.Entities.Concrete;
-using Navyki.ToDo.Web.Areas.Member.Models;
+using Navyki.ToDo.Web.BaseControllers;
 
 namespace Navyki.ToDo.Web.Areas.Member.Controllers
 {
     [Area("Member")]
     [Authorize(Roles = "Member")]
-    public class WorkController : Controller
+    public class WorkController : BaseIdentityController
     {
         private readonly IWorkService _workService;
-        private readonly UserManager<AppUser> _userManager;
         private readonly IReportService _reportService;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
 
-        public WorkController(IWorkService workService, UserManager<AppUser> userManager, IReportService reportService, INotificationService notificationService,IMapper mapper)
+        public WorkController(IWorkService workService, UserManager<AppUser> userManager, IReportService reportService, INotificationService notificationService,IMapper mapper) :base(userManager)
         {
             _workService = workService;
-            _userManager = userManager;
             _mapper = mapper;
             _reportService = reportService;
             _notificationService = notificationService;
         }
         public async  Task<IActionResult> Index()
         {
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var user = await GetLogginedUser();
             TempData["Active"] = "works";
             
 
@@ -47,9 +45,11 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
         {
             TempData["Active"] = "works";
             var work = _workService.GetUrgencyWithId(id);
-            ReportAddDto model = new ReportAddDto();
-            model.Work = work;
-            model.WorkId = id;
+            ReportAddDto model = new ReportAddDto
+            {
+                Work = work,
+                WorkId = id
+            };
             return View(model);
         }
 
@@ -67,7 +67,7 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
 
                 var adminUserList = await _userManager.GetUsersInRoleAsync("Admin");
 
-                var activeUser = await _userManager.FindByNameAsync(User.Identity.Name);
+                var activeUser = await GetLogginedUser();
 
                 foreach (var admin in adminUserList)
                 {
@@ -88,12 +88,14 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
         {
             TempData["Active"] = "works";
             var report =_reportService.GetWithWork(id);
-            ReportUpdateDto model = new ReportUpdateDto();
-            model.Id = report.Id;
-            model.Description = report.Description;
-            model.Detail = report.Detail;
-            model.Work = report.Work;
-            model.WorkId = report.WorkId;
+            ReportUpdateDto model = new ReportUpdateDto
+            {
+                Id = report.Id,
+                Description = report.Description,
+                Detail = report.Detail,
+                Work = report.Work,
+                WorkId = report.WorkId
+            };
             return View(model);
         }
 
@@ -123,7 +125,7 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
 
             var adminUserList = await _userManager.GetUsersInRoleAsync("Admin");
 
-            var activeUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            var activeUser = await GetLogginedUser();
 
             foreach (var admin in adminUserList)
             {

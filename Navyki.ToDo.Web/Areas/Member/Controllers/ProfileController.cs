@@ -9,25 +9,25 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.DTO.DTOs.AppUserDtos;
 using Navyki.Todo.Entities.Concrete;
-using Navyki.ToDo.Web.Areas.Member.Models;
+using Navyki.ToDo.Web.BaseControllers;
 
 namespace Navyki.ToDo.Web.Areas.Member.Controllers
 {
     [Area("Member")]
     [Authorize(Roles = "Member")]
-    public class ProfileController : Controller
+    public class ProfileController : BaseIdentityController
     {
-        private readonly UserManager<AppUser> _userManager;
+
         private readonly IMapper _mapper;
-        public ProfileController(UserManager<AppUser> userManager, IMapper mapper)
+        public ProfileController(UserManager<AppUser> userManager, IMapper mapper):base(userManager)
         {
-            _userManager = userManager;
+            
             _mapper = mapper;
         }
         public async Task<IActionResult> Index()
         {
             TempData["Active"] = "profile";
-            var appUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            var appUser = await GetLogginedUser();
             return View(_mapper.Map<AppUserListDto>(appUser));
         }
 
@@ -46,7 +46,6 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
                     {
                         await Image.CopyToAsync(stream);
                     }
-
                     willBeUpdatedUser.Picture = imageName;
                 }
                 willBeUpdatedUser.Name = model.Name;
@@ -60,10 +59,7 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
                 }
                 else
                 {
-                    foreach (var item in result.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
+                    AddError(result.Errors);
                 }
             }
             return View(model);

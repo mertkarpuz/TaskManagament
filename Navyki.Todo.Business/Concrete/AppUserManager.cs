@@ -9,7 +9,7 @@ namespace Navyki.Todo.Business.Concrete
 {
     public class AppUserManager : IAppUserService
     {
-        IAppUserDal _userDal;
+        private readonly IAppUserDal _userDal;
         public AppUserManager(IAppUserDal userDal)
         {
             _userDal = userDal;

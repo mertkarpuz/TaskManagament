@@ -9,29 +9,26 @@ using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.DTO.DTOs.WorkDtos;
 using Navyki.Todo.Entities.Concrete;
-using Navyki.ToDo.Web.Areas.Member.Models;
+using Navyki.ToDo.Web.BaseControllers;
 
 namespace Navyki.ToDo.Web.Areas.Member.Controllers
 {
     [Authorize(Roles ="Member")]
     [Area("Member")]
-    public class WorkStateController : Controller
+    public class WorkStateController : BaseIdentityController
     {
         public readonly IWorkService _workService;
-        private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
-        public WorkStateController(IWorkService workService, UserManager<AppUser> userManager,IMapper mapper)
+        public WorkStateController(IWorkService workService, UserManager<AppUser> userManager,IMapper mapper):base(userManager)
         {
             _workService = workService;
             _mapper = mapper;
-            _userManager = userManager; 
         }
         public async Task <IActionResult> Index(int activePage=1)
         {
             TempData["Active"] = "Complete";
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            int totalPage;
-            var works = _mapper.Map<List<WorkListAllDto>>(_workService.GetWillAllTablesUnComp(out totalPage, user.Id, activePage));
+            var user = await GetLogginedUser();
+            var works = _mapper.Map<List<WorkListAllDto>>(_workService.GetWillAllTablesUnComp(out int totalPage, user.Id, activePage));
 
             ViewBag.TotalPage = totalPage;
             ViewBag.ActivePage = activePage;
