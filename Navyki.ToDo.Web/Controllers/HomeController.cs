@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
@@ -14,9 +15,11 @@ namespace Navyki.ToDo.Web.Controllers
     public class HomeController : BaseIdentityController
     {
         private readonly SignInManager<AppUser> _signInManager;
-        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager):base(userManager)
+        private readonly ICustomLogger _customLogger;
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ICustomLogger customLogger):base(userManager)
         {
             _signInManager = signInManager;
+            _customLogger = customLogger;
         }
         public IActionResult Index()
         {
@@ -28,7 +31,7 @@ namespace Navyki.ToDo.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await GetLogginedUser();
+                var user = await _userManager.FindByNameAsync(model.UserName);
                 if (user != null)
                 {
                   var identityResult =  await _signInManager.PasswordSignInAsync(model.UserName,model.Password,model.RememberMe,false);
@@ -89,6 +92,26 @@ namespace Navyki.ToDo.Web.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index");
+        }
+
+        public IActionResult StatusCode(int? code)
+        {
+            if (code == 404)
+            {
+                ViewBag.Code = code;
+                ViewBag.Message = "Sayfa bulunamadı";
+            }
+            return View();
+        }
+
+
+        public IActionResult Error()
+        {
+            var exceptionHandler = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            _customLogger.LogError($"Hatanın oluştuğu yer:{exceptionHandler.Path}\n Hatanın mesajı : {exceptionHandler.Error.Message}\n Stack Trace: {exceptionHandler.Error.StackTrace}");
+            ViewBag.Path = exceptionHandler.Path;
+            ViewBag.Message = exceptionHandler.Error.Message;
+            return View();
         }
 
     }

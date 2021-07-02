@@ -10,11 +10,12 @@ using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.DTO.DTOs.AppUserDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.BaseControllers;
+using Navyki.ToDo.Web.StringInfo;
 
 namespace Navyki.ToDo.Web.Areas.Member.Controllers
 {
-    [Area("Member")]
-    [Authorize(Roles = "Member")]
+    [Authorize(Roles = RoleInfo.Member)]
+    [Area(RoleInfo.Member)]
     public class ProfileController : BaseIdentityController
     {
 
@@ -26,7 +27,7 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            TempData["Active"] = "profile";
+            TempData["Active"] = TempdataInfo.Profile;
             var appUser = await GetLogginedUser();
             return View(_mapper.Map<AppUserListDto>(appUser));
         }

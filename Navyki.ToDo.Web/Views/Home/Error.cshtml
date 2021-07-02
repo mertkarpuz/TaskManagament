@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewData["Title"] = "Error";
+    Layout = "~/Views/Shared/StandardLayout.cshtml";
+}
+
+<div class="text-center">
+    <div class="row  my-1 mt-5">
+
+        <div class="col-md-12">
+            <div>
+                <img src="~/img/warning.png" />
+            </div>
+            <div class="mt-2">
+                Teknik bir hata oluştu. Teknik ekibimiz bilgilendirildi. İlgili hata en yakın zamanda düzeltilecektir.
+            </div>
+            </div>
+           
+    </div>
+    <div class="row  my-2">
+        <div class="col-md-12">
+            <strong>Hatanın gerçekleştiği yer:</strong>  @ViewBag.Path <strong>Hata Mesajı:</strong>  @ViewBag.Message
+        </div>
+    </div>
+</div>

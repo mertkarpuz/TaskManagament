@@ -8,11 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.BaseControllers;
+using Navyki.ToDo.Web.StringInfo;
 
 namespace Navyki.ToDo.Web.Areas.Member.Controllers
 {
-    [Authorize(Roles = "Member")]
-    [Area("Member")]
+    [Authorize(Roles = RoleInfo.Member)]
+    [Area(RoleInfo.Member)]
     public class HomeController : BaseIdentityController
     {
         private readonly IReportService _reportService;
@@ -27,7 +28,7 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await GetLogginedUser();
-            TempData["Active"] = "home";
+            TempData["Active"] = TempdataInfo.Home;
             ViewBag.ReportCount = _reportService.GetReportCountWithAppUserId(user.Id);
             ViewBag.CompletedWorks = _workService.GetWorkCountCompletedWithAppUserId(user.Id);
             ViewBag.NotCompletedWorkCount = _workService.GetWorkCountNonCompletedWithAppUserId(user.Id);

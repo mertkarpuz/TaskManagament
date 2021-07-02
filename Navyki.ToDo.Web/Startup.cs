@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Navyki.Todo.Business.Concrete;
+using Navyki.Todo.Business.DiContainer;
 using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.Business.ValidationRules.FluentValidation;
 using Navyki.Todo.DataAccess.Concrete.EntityFrameworkCore.Contexts;
@@ -16,6 +17,7 @@ using Navyki.Todo.DTO.DTOs.ReportDtos;
 using Navyki.Todo.DTO.DTOs.UrgencyDtos;
 using Navyki.Todo.DTO.DTOs.WorkDtos;
 using Navyki.Todo.Entities.Concrete;
+using Navyki.ToDo.Web.CustomCollectionExtensions;
 using System;
 
 namespace Navyki.ToDo.Web
@@ -26,57 +28,11 @@ namespace Navyki.ToDo.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IWorkService, WorkManager>();
-            services.AddScoped<IUrgencyService, UrgencyManager>();
-            services.AddScoped<IReportService, ReportManager>();
-            services.AddScoped<IAppUserService,AppUserManager>();
-            services.AddScoped<IFileService, FileManager>();
-            services.AddScoped<INotificationService, NotificationManager>();
-
-            services.AddScoped<IWorkDal, EfWorkRepository>();
-            services.AddScoped<IUrgencyDal, EfUrgencyRepository>();
-            services.AddScoped<IReportDal, EfReportRepostory>();
-            services.AddScoped<IAppUserDal, EfAppUserRepository>();
-            services.AddScoped<INotificationDal, EfNotificationRepository>();
-
-
-
+            services.AddContainerWithDependencies();
             services.AddDbContext<TodoContext>();
-            services.AddIdentity<AppUser,AppRole>(opt => {
-                opt.Password.RequireDigit = false;
-                opt.Password.RequireUppercase = false;
-                opt.Password.RequiredLength = 1;
-                opt.Password.RequireLowercase = false;
-                opt.Password.RequireNonAlphanumeric = false;
-            }).AddEntityFrameworkStores<TodoContext>();
-
-            services.ConfigureApplicationCookie(opt =>
-            {
-                opt.Cookie.Name = "BusinessCookie";
-                opt.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
-                opt.Cookie.HttpOnly = true;
-                opt.ExpireTimeSpan = TimeSpan.FromDays(20);
-                opt.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest;
-                opt.LoginPath = "/Home/Index";
-            }
-
-            );
-
+            services.AddCustomIdentity();
             services.AddAutoMapper(typeof(Startup));
-            services.AddTransient<IValidator<UrgencyAddDto>,UrgencyAddValidator>();
-            services.AddTransient<IValidator<UrgencyUpdateDto>, UrgencyUpdateValidator>();
-            services.AddTransient<IValidator<AppUserAddDto>, AppUserAddValidator>();
-            services.AddTransient<IValidator<AppUserSignInDto>, AppUserSignInValidator>();
-            services.AddTransient<IValidator<WorkAddDto>, WorkAddValidator>();
-            services.AddTransient<IValidator<WorkUpdateDto>, WorkUpdateValidator>();
-            services.AddTransient<IValidator<ReportAddDto>, ReportAddValidator>();
-            services.AddTransient<IValidator<ReportUpdateDto>, ReportUpdateValidator>();
-
-
-
-
-
-
+            services.AddCustomValidator();
             services.AddControllersWithViews().AddFluentValidation();
         }
 
@@ -87,6 +43,12 @@ namespace Navyki.ToDo.Web
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+            app.UseStatusCodePagesWithReExecute("/Home/StatusCode", "?code={0}");
+
 
             app.UseRouting();
             app.UseAuthentication();

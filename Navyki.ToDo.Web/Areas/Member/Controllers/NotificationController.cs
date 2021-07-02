@@ -6,6 +6,7 @@ using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.DTO.DTOs.NotificationDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.BaseControllers;
+using Navyki.ToDo.Web.StringInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,8 @@ using System.Threading.Tasks;
 
 namespace Navyki.ToDo.Web.Areas.Member.Controllers
 {
-    [Authorize(Roles ="Member")]
-    [Area("Member")]
+    [Authorize(Roles = RoleInfo.Member)]
+    [Area(RoleInfo.Member)]
 
     public class NotificationController : BaseIdentityController
     {
@@ -27,7 +28,7 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            TempData["Active"] = "notification";
+            TempData["Active"] = TempdataInfo.Notification;
             var user = await GetLogginedUser();
             return View(_mapper.Map<List<NotificationListDto>>(_notificationService.GetNotReaded(user.Id)));
         }

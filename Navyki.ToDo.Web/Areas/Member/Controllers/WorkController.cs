@@ -11,11 +11,12 @@ using Navyki.Todo.DTO.DTOs.ReportDtos;
 using Navyki.Todo.DTO.DTOs.WorkDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.BaseControllers;
+using Navyki.ToDo.Web.StringInfo;
 
 namespace Navyki.ToDo.Web.Areas.Member.Controllers
 {
-    [Area("Member")]
-    [Authorize(Roles = "Member")]
+    [Authorize(Roles = RoleInfo.Member)]
+    [Area(RoleInfo.Member)]
     public class WorkController : BaseIdentityController
     {
         private readonly IWorkService _workService;
@@ -33,7 +34,7 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
         public async  Task<IActionResult> Index()
         {
             var user = await GetLogginedUser();
-            TempData["Active"] = "works";
+            TempData["Active"] = TempdataInfo.Work;
             
 
 
@@ -43,7 +44,7 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
 
         public IActionResult AddReport(int id)
         {
-            TempData["Active"] = "works";
+            TempData["Active"] = TempdataInfo.Work;
             var work = _workService.GetUrgencyWithId(id);
             ReportAddDto model = new ReportAddDto
             {
@@ -86,7 +87,7 @@ namespace Navyki.ToDo.Web.Areas.Member.Controllers
 
         public IActionResult UpdateReport(int id)
         {
-            TempData["Active"] = "works";
+            TempData["Active"] = TempdataInfo.Work;
             var report =_reportService.GetWithWork(id);
             ReportUpdateDto model = new ReportUpdateDto
             {
