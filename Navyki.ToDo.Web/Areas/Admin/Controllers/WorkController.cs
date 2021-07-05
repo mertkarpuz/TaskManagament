@@ -55,6 +55,7 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
                 });
                 return RedirectToAction("Index");
             }
+            ViewBag.Urgencies = new SelectList(_urgencyService.GetAll(), "Id", "Description");
             return View(model);
         }
 

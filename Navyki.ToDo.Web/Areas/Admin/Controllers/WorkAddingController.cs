@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Navyki.Todo.Business.Interfaces;
 using Navyki.Todo.DTO.DTOs.AppUserDtos;
+using Navyki.Todo.DTO.DTOs.ReportDtos;
 using Navyki.Todo.DTO.DTOs.WorkDtos;
 using Navyki.Todo.Entities.Concrete;
 using Navyki.ToDo.Web.StringInfo;
@@ -100,12 +101,12 @@ namespace Navyki.ToDo.Web.Areas.Admin.Controllers
 
         public IActionResult GetExcel(int id)
         {
-            return File(_fileService.TransferExcel(_workService.GetWReportsWId(id).Reports), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Guid.NewGuid() + ".xlsx");
+            return File(_fileService.TransferExcel(_mapper.Map<List<ReportFileDto>>(_workService.GetWReportsWId(id).Reports)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Guid.NewGuid() + ".xlsx");
         }
 
         public IActionResult GetPdf(int id)
         {
-            var path = _fileService.TransferPdf(_workService.GetWReportsWId(id).Reports);
+            var path = _fileService.TransferPdf(_mapper.Map<List<ReportFileDto>>(_workService.GetWReportsWId(id).Reports));
             return File(path, "application/pdf", Guid.NewGuid() + ".pdf");
         }
     }

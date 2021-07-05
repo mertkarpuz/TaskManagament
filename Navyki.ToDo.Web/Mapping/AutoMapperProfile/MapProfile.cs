@@ -55,8 +55,12 @@ namespace Navyki.ToDo.Web.Mapping.AutoMapperProfile
             CreateMap<ReportAddDto, Report>();
             CreateMap<Report, ReportAddDto>();
             CreateMap<ReportUpdateDto, Report>();
-            CreateMap<Report, ReportUpdateDto>(); 
+            CreateMap<Report, ReportUpdateDto>();
+            CreateMap<ReportFileDto, Report>();
+            CreateMap<Report, ReportFileDto>();
             #endregion
+
+
         }
     }
 }
